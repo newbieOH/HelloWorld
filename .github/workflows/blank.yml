@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # Setup Node.js environment
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'  # specify your node.js version here
+
+    # Install dependencies
+    - name: Install dependencies
+      run: npm install
+
+    # Build your project (adjust the build script as per your package.json)
+    - name: Build
+      run: npm run build
+
+    # Optional: run tests
+    - name: Run tests
+      run: npm test
+
+    # Deploy to Azure Web App
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'helloworldaz900'  # Replace with your Azure App Service name
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile }}
+
+
